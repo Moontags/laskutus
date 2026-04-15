@@ -128,3 +128,57 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  aside,
+  header,
+  nav,
+  .no-print,
+  [class*="sidebar"],
+  [class*="Sidebar"] {
+    display: none !important;
+  }
+
+  .flex.min-h-screen {
+    display: block !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  @page {
+    margin: 15mm;
+    size: A4;
+  }
+
+  .max-w-4xl {
+    max-width: 100% !important;
+  }
+
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .rounded-xl {
+    border-radius: 0 !important;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 12px !important;
+  }
+
+  .p-6 {
+    padding: 10px !important;
+  }
+}
