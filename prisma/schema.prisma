@@ -1,13 +1,158 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─── Organisaatio ──────────────────────────────────────────────────────────
+model Organization {
+  id                  String   @id @default(uuid())
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  name                String
+  businessId          String   @unique
+  vatNumber           String?
+  email               String
+  phone               String?
+  website             String?
+  street              String
+  city                String
+  postalCode          String
+  country             String   @default("FI")
+  bankAccount         String?
+  bankBic             String?
+  defaultDueDays      Int      @default(14)
+  defaultVatRate      Float    @default(25.5)
+  invoicePrefix       String   @default("LASKU")
+  nextInvoiceNumber   Int      @default(1)
+  logoUrl             String?
+  defaultPaymentTerms String?
+  lateInterestRate    Float    @default(7.0)
+  penaltyFee          Float    @default(5.0)
+  members             OrganizationMember[]
+  customers           Customer[]
+  invoices            Invoice[]
+  products            Product[]
+
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  role           MemberRole   @default(MEMBER)
+
+  @@unique([organizationId, userId])
+  @@map("organization_members")
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model Customer {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  businessId     String?
+  vatNumber      String?
+  email          String
+  phone          String?
+  contactPerson  String?
+  street         String
+  city           String
+  postalCode     String
+  country        String       @default("FI")
+  notes          String?
+  isActive       Boolean      @default(true)
+  invoices       Invoice[]
+
+  @@map("customers")
+}
+
+model Product {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name           String
+  description    String?
+  unit           String       @default("kpl")
+  unitPrice      Float
+  vatRate        Float        @default(25.5)
+  isActive       Boolean      @default(true)
+  invoiceItems   InvoiceItem[]
+
+  @@map("products")
+}
+
+model Invoice {
+  id             String        @id @default(uuid())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  customerId     String
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  invoiceNumber  String        @unique
+  reference      String?
+  status         InvoiceStatus @default(DRAFT)
+  invoiceDate    DateTime      @default(now())
+  dueDate        DateTime
+  paidAt         DateTime?
+  subtotal       Float         @default(0)
+  vatAmount      Float         @default(0)
+  total          Float         @default(0)
+  notes          String?
+  internalNotes  String?
+  currency       String        @default("EUR")
+  bankAccount    String?
+  bankBic        String?
+  reminderSentAt DateTime?
+  reminderCount  Int           @default(0)
+  items          InvoiceItem[]
+
+  @@map("invoices")
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+model InvoiceItem {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  invoiceId   String
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  productId   String?
+  product     Product? @relation(fields: [productId], references: [id])
+  description String
+  quantity    Float    @default(1)
+  unit        String   @default("kpl")
+  unitPrice   Float
+  vatRate     Float    @default(25.5)
+  lineTotal   Float
+  vatAmount   Float
+  totalAmount Float
+  sortOrder   Int      @default(0)
+
+  @@map("invoice_items")
 }
