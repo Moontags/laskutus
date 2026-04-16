@@ -6,6 +6,7 @@ import { adminSupabase } from "@/lib/supabase/admin";
 import { formatCurrency, formatDate } from "@/lib/invoice-utils";
 import InvoiceStatusBadge from "@/components/invoices/invoice-status-badge";
 import PrintButton from "@/components/invoices/print-button";
+import InvoiceActions from "@/components/invoices/invoice-actions";
 
 export default async function InvoicePage({
   params,
@@ -31,6 +32,7 @@ export default async function InvoicePage({
 
   return (
     <div className="max-w-4xl w-full">
+
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4 no-print">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">{invoice.invoiceNumber}</h1>
@@ -47,6 +49,13 @@ export default async function InvoicePage({
           <Link href="/dashboard/invoices" className="px-4 py-2 rounded-lg text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
             Takaisin
           </Link>
+        </div>
+        <div className="mt-3 no-print">
+          <InvoiceActions
+            invoiceId={id}
+            currentStatus={invoice.status}
+            customerEmail={invoice.customer?.email}
+          />
         </div>
       </div>
 
