@@ -4,6 +4,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { formatCurrency, calculateLineTotal, calculateVatAmount } from "@/lib/invoice-utils";
 
 export interface InvoiceItemRow {
+  sortOrder?: number;
   id?: string;
   description: string;
   quantity: number;
