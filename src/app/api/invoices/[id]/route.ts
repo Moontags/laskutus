@@ -3,7 +3,6 @@ import { getUser } from "@/lib/auth";
 import { getUserOrganization } from "@/lib/organization";
 import { adminSupabase } from "@/lib/supabase/admin";
 import { calculateLineTotal, calculateVatAmount, calculateInvoiceTotals } from "@/lib/invoice-utils";
-import { calculateInvoiceTotals, calculateLineTotal, calculateVatAmount } from "@/lib/invoice-utils";
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
