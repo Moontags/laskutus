@@ -94,7 +94,7 @@ export async function POST(
   `;
 
   const { error: sendError } = await resend.emails.send({
-    from: "onboarding@resend.dev",
+    from: "laskutus@finishpoint.fi",
     to: customer.email,
     subject: `Lasku ${invoice.invoiceNumber} — ${org.name} — eräpäivä ${formatDate(invoice.dueDate)}`,
     html,
