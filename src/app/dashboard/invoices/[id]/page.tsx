@@ -66,7 +66,7 @@ export default async function InvoicePage({
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-0.5">Laskunumero</p>
             <p className="text-xl font-bold text-gray-900">{invoice.invoiceNumber}</p>
           </div>
-          <div className="text-right">
+          <div className="text-right no-print">
             <p className="text-xs text-gray-500 uppercase tracking-wider mb-0.5">Tila</p>
             <InvoiceStatusBadge status={invoice.status} />
           </div>

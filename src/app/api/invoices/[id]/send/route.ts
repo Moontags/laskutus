@@ -63,8 +63,16 @@ export async function POST(
       <td style="padding: 8px 0; color: #666; font-size: 14px;">Viitenumero</td>
       <td style="padding: 8px 0; font-size: 14px; text-align: right;">${invoice.reference ?? "—"}</td>
     </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #666; font-size: 14px;">Veroton yhteensä</td>
+      <td style="padding: 8px 0; font-size: 14px; text-align: right;">${formatCurrency(invoice.subtotal)}</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px 0; color: #666; font-size: 14px;">ALV</td>
+      <td style="padding: 8px 0; font-size: 14px; text-align: right;">${formatCurrency(invoice.vatAmount)}</td>
+    </tr>
     <tr style="border-top: 2px solid #111;">
-      <td style="padding: 12px 0; font-size: 16px; font-weight: bold;">Yhteensä</td>
+      <td style="padding: 12px 0; font-size: 16px; font-weight: bold;">Yhteensä (sis. ALV)</td>
       <td style="padding: 12px 0; font-size: 16px; font-weight: bold; text-align: right;">${formatCurrency(invoice.total)}</td>
     </tr>
   </table>
@@ -94,7 +102,7 @@ export async function POST(
   `;
 
   const { error: sendError } = await resend.emails.send({
-    from: "laskutus@finishpoint.fi",
+    from: "laskutus@pakuvie.fi",
     to: customer.email,
     subject: `Lasku ${invoice.invoiceNumber} — ${org.name} — eräpäivä ${formatDate(invoice.dueDate)}`,
     html,
